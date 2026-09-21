@@ -6,10 +6,13 @@ sidebar:
   order: 2
 ---
 
+import { Image } from 'astro:assets';
 import { Aside } from '@astrojs/starlight/components';
 import { LinkButton } from '@astrojs/starlight/components';
 import { Tabs, TabItem } from '@astrojs/starlight/components';
 import { FileTree } from '@astrojs/starlight/components';
+import TemplateProject from '../../../assets/template-project.png';
+
 
 ## Requirements
 Before we get started with the guide, there are a few things that you should
@@ -95,7 +98,7 @@ you named your project). Open that folder in a code editor of your choice. If
 you don't have a code editor, we recommend starting with
 [Visual Studio Code](https://code.visualstudio.com/) or [Zed](https://zed.dev/).
 
-![template project open in a text editor editor](/docs/template-project.png)
+<Image src={TemplateProject} alt="template project open in a text editor editor" />
 
 If you've worked in a rust project before, this file structure should be
 somewhat familiar to you.
