@@ -4,8 +4,8 @@ import starlight from "@astrojs/starlight";
 
 // https://astro.build/config
 export default defineConfig({
-  site: "https://harshal.is-cool.dev/",
-  base: "/antaeus-docs",
+  site: "https://antaeus.saturnyx.dev/",
+  base: "/",
   integrations: [
     starlight({
       title: "Antaeus Documentation",
@@ -29,6 +29,10 @@ export default defineConfig({
         {
           label: "Concepts",
           items: [{ autogenerate: { directory: "concepts" } }],
+        },
+        {
+          label: "Writing User Programs",
+          items: [{ autogenerate: { directory: "user" } }],
         },
         {
           label: "API Reference",
