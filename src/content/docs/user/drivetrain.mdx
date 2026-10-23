@@ -1,0 +1,195 @@
+---
+title: Adding a Drivetrain
+lastUpdated: 2026-10-23
+sidebar:
+  order: 2
+---
+
+In this tutorial, we will be looking into how to configure a drivetrain. Unlike in many other many other control libraries, the drivetrain is not directly treated as an object(or `struct`) but rather a trait. The [`Differential`](https://docs.rs/antaeus/0.3.12/antaeus/peripherals/drivetrain/trait.Differential.html) trait allows multiple objects to act as a differential/tank drivetrain. This allows holonomic or custom drivetrains, such as H-Drive or X-Drive, to basically work as differential drivetrains.
+
+## Standard Differential Drivetrains
+In most scenarios, we will be using [`StandardDifferential`](https://docs.rs/antaeus/0.3.12/antaeus/peripherals/drivetrain/differential/struct.StandardDifferential.html) struct as a drivetrain object. This is a look into its members:
+
+```rust
+pub struct StandardDifferential {
+    /// The left motor group.
+    ///
+    /// Contains all motors on the left side of the drivetrain.
+    /// These motors should be configured to spin in the same direction
+    /// relative to each other.
+    pub left: Rc<RefCell<dyn AsMut<[Motor]>>>,
+
+    /// The right motor group.
+    ///
+    /// Contains all motors on the right side of the drivetrain.
+    /// These motors should be configured to spin in the same direction
+    /// relative to each other (typically opposite to the left side for
+    /// forward movement).
+    pub right: Rc<RefCell<dyn AsMut<[Motor]>>>,
+
+    /// Drivetrain Configuration
+    pub config: DifferentialConfig,
+}
+```
+
+The groups are stored as `Rc<RefCell<dyn AsMut<[Motor]>>>` so you can share them with other subsystems (PID, odometry, motion profiling) while still being able to mutate motor state.
+
+## Using `StandardDifferential`
+To use [`StandardDifferential`](https://docs.rs/antaeus/0.3.12/antaeus/peripherals/drivetrain/differential/struct.StandardDifferential.html), we need to add it to our `Robot` struct:
+
+```rust add={2}
+struct Robot {
+    drivetrain: StandardDifferential,
+    controller: Controller,
+}
+```
+
+And we will also have to declare it to our `main` function:
+
+```rust add={3-21} add={24}
+#[vexide::main]
+async fn main(peripherals: Peripherals) {
+    let mut differential_drivetrain = StandardDifferential::new(
+        // Left side
+        [
+            Motor::new(peripherals.port_1, Gearset::Green, Direction::Forward),
+            Motor::new(peripherals.port_2, Gearset::Green, Direction::Forward),
+        ],
+        // Right side:
+        [
+            Motor::new(peripherals.port_3, Gearset::Green, Direction::Reverse),
+            Motor::new(peripherals.port_4, Gearset::Green, Direction::Reverse),
+        ],
+        // Config
+        DifferentialConfig::new(
+            Length::from_inches(12.0), // Track Width
+            Length::from_inches(3.25), // Wheel Size
+            1.0, // Driven Gear (Wheel)
+            1.0, // Driving Gear (Motor)
+        ),
+    );
+
+    let robot = Robot {
+        drivetrain: differential_drivetrain,
+    };
+
+    robot.compete().await;
+}
+```
+
+### Controller Drive
+
+The [`StandardDifferential`](https://docs.rs/antaeus/0.3.12/antaeus/peripherals/drivetrain/differential/struct.StandardDifferential.html) struct also implements the [`Drivable`](https://docs.rs/antaeus/0.3.12/antaeus/peripherals/drivetrain/trait.Drivable.html) trait, which means that is can be controlled via `drivetrain.tank(&controller)` or `drivetrain.arcade(&controller)`. But first, to use a controller, we need to add it to `Robot`.
+
+```rust add={3}
+struct Robot {
+    drivetrain: StandardDifferential,
+    controller: Controller,
+}
+```
+
+```rust add={25}
+#[vexide::main]
+async fn main(peripherals: Peripherals) {
+    let mut differential_drivetrain = StandardDifferential::new(
+        // Left side
+        [
+            Motor::new(peripherals.port_1, Gearset::Green, Direction::Forward),
+            Motor::new(peripherals.port_2, Gearset::Green, Direction::Forward),
+        ],
+        // Right side:
+        [
+            Motor::new(peripherals.port_3, Gearset::Green, Direction::Reverse),
+            Motor::new(peripherals.port_4, Gearset::Green, Direction::Reverse),
+        ],
+        // Config
+        DifferentialConfig::new(
+            Length::from_inches(12.0), // Track Width
+            Length::from_inches(3.25), // Wheel Size
+            1.0, // Driven Gear (Wheel)
+            1.0, // Driving Gear (Motor)
+        ),
+    );
+
+    let robot = Robot {
+        drivetrain: differential_drivetrain,
+        controller: peripherals.primary_controller,
+    };
+
+    robot.compete().await;
+}
+```
+
+Next, for it to actually work during driver control, we need to call `drivetrain.tank(&controller)` (or `drivetrain.arcade(&controller)`) in a loop in the `driver` trait implementation function.
+
+```rust add={2-4}
+    async fn driver(&mut self) {
+        loop {
+            let _ = self.drivetrain.tank(&self.controller);
+        }
+    }
+```
+
+Now, you have a fully functioning drivetrain that support driver control. If you wish to verify your code, you can look into the collapsible section below.
+
+<details>
+<summary>Final Code</summary>
+Remember, directly copying from below means you will learn nothing. If you don't understand something, I highly recommend re-reading this page instead of just blindly copy-and-pasting.
+
+```rust
+use std::time::Duration;
+
+use antaeus::{
+    motion::control::drive::DriveFeedbackControl,
+    peripherals::{
+        drivetrain::{Drivable, differential::StandardDifferential},
+        mapper::{DigitalInput, motor::MotorMapper},
+    },
+    prelude::differential::DifferentialConfig,
+    utils::units::Length,
+};
+
+use vexide::prelude::*;
+struct Clawbot {
+    drivetrain: StandardDifferential,
+    controller: Controller,
+}
+
+impl Compete for Clawbot {
+    async fn autonomous(&mut self) {}
+
+    async fn driver(&mut self) {
+        loop {
+            let _ = self.drivetrain.tank(&self.controller);
+        }
+    }
+}
+
+#[vexide::main]
+async fn main(peripherals: Peripherals) {
+    // Configuring devices and handing off control to the competition API.
+    Clawbot {
+        drivetrain: StandardDifferential::new(
+            [
+                Motor::new(peripherals.port_1, Gearset::Green, Direction::Forward),
+                Motor::new(peripherals.port_2, Gearset::Green, Direction::Forward),
+            ],
+            [
+                Motor::new(peripherals.port_3, Gearset::Green, Direction::Reverse),
+                Motor::new(peripherals.port_4, Gearset::Green, Direction::Reverse),
+            ],
+            DifferentialConfig::new(
+                Length::from_inches(12.0),
+                Length::from_inches(3.25),
+                1.0, // Direct Drive
+                1.0,
+            ),
+        ),
+        controller: peripherals.primary_controller,
+    }
+    .compete()
+    .await;
+}
+```
+
+</details>
