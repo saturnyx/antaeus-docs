@@ -8,7 +8,7 @@ export default defineConfig({
   base: "/",
   integrations: [
     starlight({
-      title: "Antaeus Documentation",
+      title: "Antaeus",
       favicon: "/favicon.png",
       customCss: ["./src/styles/main.scss"],
       components: {
