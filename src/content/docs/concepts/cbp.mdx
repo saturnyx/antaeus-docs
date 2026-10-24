@@ -12,7 +12,6 @@ import { Image } from 'astro:assets';
 import IntersectsImage from '../../../assets/intersect.png';
 import CbpImage from '../../../assets/cbp.png';
 
-
 ## Pure Pursuit
 
 Pure Pursuit is a geometric path-tracking algorithm widely used in autonomous
@@ -31,15 +30,15 @@ with this algorithm.
 Here is a few words that we'll be using that might differ from other articles,
 and hence, are good to take note of:
 
- - Point: A dimensionless object with an `x` and `y` value
- - Path: An ordered collection of Waypoints
- - Waypoint: A point on the Path with a `t` Value
- - Circle: A imaginary circle around the position of the robot
- - Lookahead Distance: A constant that acts as the radius of the Circle
- - `t` Value: An index used to represent the position of a Waypoint in a Path.
-   The first Waypoint(or origin) will have a `t` Value of `0.0`. The next Waypoint
-   will have a `t` value of `1.0`. A Point in the midpoint these 2 Waypoints may
-   have a `t` value of `0.5`. (`t` values are optional for Points)
+- Point: A dimensionless object with an `x` and `y` value
+- Path: An ordered collection of Waypoints
+- Waypoint: A point on the Path with a `t` Value
+- Circle: A imaginary circle around the position of the robot
+- Lookahead Distance: A constant that acts as the radius of the Circle
+- `t` Value: An index used to represent the position of a Waypoint in a Path.
+  The first Waypoint(or origin) will have a `t` Value of `0.0`. The next
+  Waypoint will have a `t` value of `1.0`. A Point in the midpoint these 2
+  Waypoints may have a `t` value of `0.5`. (`t` values are optional for Points)
 
 ### How Pure Pursuit works
 

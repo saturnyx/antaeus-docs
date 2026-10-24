@@ -8,10 +8,19 @@ sidebar:
 import { Image } from 'astro:assets';
 import DrivetrainImage from '../../../assets/drivetrain_track.svg';
 
-In this tutorial, we will be looking into how to configure a drivetrain. Unlike in many other many other control libraries, the drivetrain is not directly treated as an object(or `struct`) but rather a trait. The [`Differential`](https://docs.rs/antaeus/0.3.12/antaeus/peripherals/drivetrain/trait.Differential.html) trait allows multiple objects to act as a differential/tank drivetrain. This allows holonomic or custom drivetrains, such as H-Drive or X-Drive, to basically work as differential drivetrains.
+In this tutorial, we will be looking into how to configure a drivetrain. Unlike
+in many other many other control libraries, the drivetrain is not directly
+treated as an object(or `struct`) but rather a trait. The
+[`Differential`](https://docs.rs/antaeus/0.3.12/antaeus/peripherals/drivetrain/trait.Differential.html)
+trait allows multiple objects to act as a differential/tank drivetrain. This
+allows holonomic or custom drivetrains, such as H-Drive or X-Drive, to basically
+work as differential drivetrains.
 
 ## Standard Differential Drivetrains
-In most scenarios, we will be using [`StandardDifferential`](https://docs.rs/antaeus/0.3.12/antaeus/peripherals/drivetrain/differential/struct.StandardDifferential.html) struct as a drivetrain object. This is a look into its members:
+
+In most scenarios, we will be using
+[`StandardDifferential`](https://docs.rs/antaeus/0.3.12/antaeus/peripherals/drivetrain/differential/struct.StandardDifferential.html)
+struct as a drivetrain object. This is a look into its members:
 
 ```rust
 pub struct StandardDifferential {
@@ -35,10 +44,15 @@ pub struct StandardDifferential {
 }
 ```
 
-The groups are stored as `Rc<RefCell<dyn AsMut<[Motor]>>>` so you can share them with other subsystems (PID, odometry, motion profiling) while still being able to mutate motor state.
+The groups are stored as `Rc<RefCell<dyn AsMut<[Motor]>>>` so you can share them
+with other subsystems (PID, odometry, motion profiling) while still being able
+to mutate motor state.
 
 ## Using `StandardDifferential`
-To use [`StandardDifferential`](https://docs.rs/antaeus/0.3.12/antaeus/peripherals/drivetrain/differential/struct.StandardDifferential.html), we need to add it to our `Robot` struct:
+
+To use
+[`StandardDifferential`](https://docs.rs/antaeus/0.3.12/antaeus/peripherals/drivetrain/differential/struct.StandardDifferential.html),
+we need to add it to our `Robot` struct:
 
 ```rust add={2}
 struct Robot {
@@ -82,7 +96,12 @@ async fn main(peripherals: Peripherals) {
 
 ### Configuring the Drivetrain
 
-[`StandardDifferential`](https://docs.rs/antaeus/0.3.12/antaeus/peripherals/drivetrain/differential/struct.StandardDifferential.html) also holds information about the drivetrain that can be access by algorithms using it. This is done via the [`config: DifferentialConfig`](https://docs.rs/antaeus/0.3.12/antaeus/peripherals/drivetrain/differential/struct.DifferentialConfig.html) member in [`StandardDifferential`](https://docs.rs/antaeus/0.3.12/antaeus/peripherals/drivetrain/differential/struct.StandardDifferential.html).
+[`StandardDifferential`](https://docs.rs/antaeus/0.3.12/antaeus/peripherals/drivetrain/differential/struct.StandardDifferential.html)
+also holds information about the drivetrain that can be access by algorithms
+using it. This is done via the
+[`config: DifferentialConfig`](https://docs.rs/antaeus/0.3.12/antaeus/peripherals/drivetrain/differential/struct.DifferentialConfig.html)
+member in
+[`StandardDifferential`](https://docs.rs/antaeus/0.3.12/antaeus/peripherals/drivetrain/differential/struct.StandardDifferential.html).
 
 ```rust
 pub struct DifferentialConfig {
@@ -93,7 +112,10 @@ pub struct DifferentialConfig {
 }
 ```
 
-Currently we have assumed that our robot uses 3.25-inch wheels and a direct (1-to-1) gearing, with a track width of 12.0 inches. But these values are not universal to all robots (in fact, it's a very bad gear ratio now that I think of it!).
+Currently we have assumed that our robot uses 3.25-inch wheels and a direct
+(1-to-1) gearing, with a track width of 12.0 inches. But these values are not
+universal to all robots (in fact, it's a very bad gear ratio now that I think of
+it!).
 
 ```rust
 DifferentialConfig::new(
@@ -105,20 +127,34 @@ DifferentialConfig::new(
 ```
 
 #### Track Width
-Track width is the horizontal distance from a wheel on the left to the wheel on the right. It is important not to confuse it with base width or wheelbase.
+
+Track width is the horizontal distance from a wheel on the left to the wheel on
+the right. It is important not to confuse it with base width or wheelbase.
 
 <Image src={DrivetrainImage} alt="" width={600}/>
 
 #### Wheel Diameter
-Pretty obviously means the diameter of the wheel. It is important to note the that the legacy wheel set is actually 0.15 inches larger than its labeled size.
+
+Pretty obviously means the diameter of the wheel. It is important to note the
+that the legacy wheel set is actually 0.15 inches larger than its labeled size.
 
 #### Driving and Driven Gears
-Simply the driving gear is the number of teeth on the gear connected to the motor while the driven gear is the number of teeth on the gear connected to the wheel. These 2 values are always used as a ratio, so you can put in any pair of numbers as long as they maintain the same ratio. For example, 36 and 48 will be the same as 3 and 4.
 
+Simply the driving gear is the number of teeth on the gear connected to the
+motor while the driven gear is the number of teeth on the gear connected to the
+wheel. These 2 values are always used as a ratio, so you can put in any pair of
+numbers as long as they maintain the same ratio. For example, 36 and 48 will be
+the same as 3 and 4.
 
 ### Controller Drive
 
-The [`StandardDifferential`](https://docs.rs/antaeus/0.3.12/antaeus/peripherals/drivetrain/differential/struct.StandardDifferential.html) struct also implements the [`Drivable`](https://docs.rs/antaeus/0.3.12/antaeus/peripherals/drivetrain/trait.Drivable.html) trait, which means that is can be controlled via `drivetrain.tank(&controller)` or `drivetrain.arcade(&controller)`. But first, to use a controller, we need to add it to `Robot`.
+The
+[`StandardDifferential`](https://docs.rs/antaeus/0.3.12/antaeus/peripherals/drivetrain/differential/struct.StandardDifferential.html)
+struct also implements the
+[`Drivable`](https://docs.rs/antaeus/0.3.12/antaeus/peripherals/drivetrain/trait.Drivable.html)
+trait, which means that is can be controlled via `drivetrain.tank(&controller)`
+or `drivetrain.arcade(&controller)`. But first, to use a controller, we need to
+add it to `Robot`.
 
 ```rust add={3}
 struct Robot {
@@ -159,7 +195,9 @@ async fn main(peripherals: Peripherals) {
 }
 ```
 
-Next, for it to actually work during driver control, we need to call `drivetrain.tank(&controller)` (or `drivetrain.arcade(&controller)`) in a loop in the `driver` trait implementation function.
+Next, for it to actually work during driver control, we need to call
+`drivetrain.tank(&controller)` (or `drivetrain.arcade(&controller)`) in a loop
+in the `driver` trait implementation function.
 
 ```rust add={2-4}
     async fn driver(&mut self) {
@@ -169,7 +207,8 @@ Next, for it to actually work during driver control, we need to call `drivetrain
     }
 ```
 
-Now, you have a fully functioning drivetrain that support driver control. If you wish to verify your code, you can look into the collapsible section below.
+Now, you have a fully functioning drivetrain that support driver control. If you
+wish to verify your code, you can look into the collapsible section below.
 
 <details>
 <summary>Final Code</summary>

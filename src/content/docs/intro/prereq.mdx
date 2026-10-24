@@ -13,20 +13,20 @@ import { Tabs, TabItem } from '@astrojs/starlight/components';
 import { FileTree } from '@astrojs/starlight/components';
 import TemplateProject from '../../../assets/template-project.png';
 
-
 ## Requirements
+
 Before we get started with the guide, there are a few things that you should
 already be familiar with. You don't need to be an expert in all of these, but
 you should have at least some experience with most of them.
 
- - Some type of **programming experience**. It doesn't matter what language, but
-   you should have at least some experience with programming in general. It will
-   be easier if it is something like Rust, C or C++, but experience with Python
-   will still be helpful. (Block-coding will not be sufficient btw)
+- Some type of **programming experience**. It doesn't matter what language, but
+  you should have at least some experience with programming in general. It will
+  be easier if it is something like Rust, C or C++, but experience with Python
+  will still be helpful. (Block-coding will not be sufficient btw)
 
- - Basic knowledge about you robot is necessary. You should know what motors,
-   sensors, and other components you have on your robot, and how to connect them
-   to the brain.
+- Basic knowledge about you robot is necessary. You should know what motors,
+  sensors, and other components you have on your robot, and how to connect them
+  to the brain.
 
 Now, if you have experience with all of these, great! You should be able to
 follow the guide without too much trouble. If you are missing one or more of
@@ -38,6 +38,7 @@ out to me on my [github profile](https://github.com/saturnyx). Now, let's get
 started with the rest of the guide!
 
 ## Installing Rust
+
 In order to use Vexide, you’ll need a Rust toolchain (cargo, rustc, etc…)
 installed on your computer. To install Rust on your system, follow the
 instructions [here](https://www.rust-lang.org/tools/install).
@@ -53,7 +54,6 @@ instructions [here](https://www.rust-lang.org/tools/install).
 </Aside>
 
 ## Install Cargo-V5
-
 
 <Tabs>
   <TabItem label="Cargo">
@@ -88,7 +88,9 @@ instructions [here](https://www.rust-lang.org/tools/install).
 </Tabs>
 
 ## Starting the Project
+
 To start a new project, run the following command in your terminal:
+
 ```bash
 cargo v5 new my_project
 ```
@@ -122,6 +124,7 @@ somewhat familiar to you.
 </FileTree>
 
 ## Adding Antaeus
+
 Good, now we have a generic Vexide Project. Next, we will be looking into how
 to modify it using Antaeus to make it work for our robot. Antaeus is available
 on [crates.io](https://crates.io/crates/antaeus), so you can easily add it using
