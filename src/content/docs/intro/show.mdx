@@ -1,0 +1,58 @@
+---
+title: Showcase
+description: Showcase of Robots working with Antaeus
+lastUpdated: 2026-11-06
+sidebar:
+  order: 3
+---
+
+import { Card } from '@astrojs/starlight/components';
+import { Image } from 'astro:assets';
+
+<Card title="Auton Tests">
+    As of now, there are no good autonomous routines that are ready to be showcased. Hence, we will be showing off Antaeus's built in simulated testing:
+
+    ### PID Controller
+
+    <iframe
+        src="/large_pid_step_response"
+        title="Interactive PID step response plot"
+        width="100%"
+        height="700"
+        loading="lazy"
+        style="border: 0; height: 500px; border-radius: 15px;"
+    />
+
+    ### Kalman Filter
+
+    <iframe
+        src="/kalman_filter_test"
+        title="Interactive Kalman filter plot"
+        width="100%"
+        height="700"
+        loading="lazy"
+        style="border: 0; height: 500px; border-radius: 15px;"
+    />
+
+    ### Odometry Motion Trace
+
+    <iframe
+        src="/odometry_motion_trace"
+        title="Interactive odometry motion trace"
+        width="100%"
+        height="700"
+        loading="lazy"
+        style="border: 0; height: 500px; border-radius: 15px;"
+    />
+
+    ### Pursuit Motion Trace
+
+    <iframe
+        src="/pursuit_motion_trace"
+        title="Interactive pursuit motion trace"
+        width="100%"
+        height="700"
+        loading="lazy"
+        style="border: 0; height: 500px; border-radius: 15px;"
+    />
+</Card>
